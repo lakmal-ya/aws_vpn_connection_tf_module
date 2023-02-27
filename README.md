@@ -124,68 +124,77 @@ You need the following information to set up and configure the components of a S
 module "aws_vpn_connection" {
   source = "../module"
 
-customer_gateway_bgp_asn = var.customer_gateway_bgp_asn
-customer_gateway_ip_address = var.customer_gateway_ip_address
-customer_gateway_type = var.customer_gateway_type
-customer_gateway_device_name = var.customer_gateway_device_name
-customer_gateway_certificate_arn = var.customer_gateway_certificate_arn
-tags = var.tags
+customer_gateway_bgp_asn    = 65000
+customer_gateway_ip_address = "172.83.124.10"
+customer_gateway_type       = "ipsec.1" #(Required) The only type AWS supports at this time is ipsec.1
+# customer_gateway_certificate_arn = "arn:aws:acm:ap-southeast-1:111111111111:certificate/365ac088-d023-4690-aa8e-6e4831a73332"
+customer_gateway_device_name = "demo_customer_gateway"
+tags = {
+  "Name" = "demo_customer_gateway"
+}
+virtual_private_gateways_vpc_id = "vpc-0421b67782c4a7158"
+# # virtual_private_gateways_amazon_side_asn = 65001
+# virtual_private_gateways_availability_zone = "ap-southeast-1a"
+route_propagation_route_table_ids       = ["rtb-033562682aace18be"]
+vpn_connection_static_routes_only       = true # Static routes must be used for devices that don't support BGP.
+vpn_connection_local_ipv4_network_cidr  = "0.0.0.0/0"
+vpn_connection_outside_ip_address_type  = "PublicIpv4"
+vpn_connection_remote_ipv4_network_cidr = "0.0.0.0/0"
 
-virtual_private_gateways_vpc_id = var.virtual_private_gateways_vpc_id
-virtual_private_gateways_amazon_side_asn  = var.virtual_private_gateways_amazon_side_asn 
-virtual_private_gateways_availability_zone = var.virtual_private_gateways_availability_zone
-vpn_connection_transit_gateway_id = var.vpn_connection_transit_gateway_id
+#####EC2 Transit Gateway
+vpn_connection_transit_gateway_id       = "tgw-0db1d860e7546e914"
+vpn_connection_local_ipv6_network_cidr  = "::/0"
+vpn_connection_remote_ipv6_network_cidr = "::/0"
+vpn_connection_tunnel1_inside_ipv6_cidr = "fd00::/126"
+vpn_connection_tunnel2_inside_ipv6_cidr = "fd00:1::/126"
+vpn_connection_enable_acceleration      = true # Supports only EC2 Transit Gateway.
+# vpn_connection_transport_transit_gateway_attachment_id = 
 
-route_propagation_route_table_ids = var.route_propagation_route_table_ids
-vpn_connection_static_routes_only = var.vpn_connection_static_routes_only
-vpn_connection_enable_acceleration  = var.vpn_connection_enable_acceleration 
-vpn_connection_local_ipv4_network_cidr = var.vpn_connection_local_ipv4_network_cidr
-vpn_connection_local_ipv6_network_cidr = var.vpn_connection_local_ipv6_network_cidr
-vpn_connection_outside_ip_address_type  = var.vpn_connection_outside_ip_address_type 
-vpn_connection_remote_ipv4_network_cidr = var.vpn_connection_remote_ipv4_network_cidr
-vpn_connection_remote_ipv6_network_cidr = var.vpn_connection_remote_ipv6_network_cidr
-vpn_connection_transport_transit_gateway_attachment_id = var.vpn_connection_transport_transit_gateway_attachment_id
+##vpn_connection_tunnel
+vpn_connection_tunnel_inside_ip_version = "ipv6"
+# vpn_connection_tunnel1_inside_cidr = "169.254.253.152/30"
+# vpn_connection_tunnel2_inside_cidr = "169.254.116.244/30"
+vpn_connection_tunnel1_dpd_timeout_action = "clear"
+vpn_connection_tunnel2_dpd_timeout_action = "clear"
+vpn_connection_tunnel1_ike_versions       = ["ikev1"]
+vpn_connection_tunnel2_ike_versions       = ["ikev2"]
+tunnel1_log_options = [{
+  log_enabled       = true
+  log_group_arn     = "arn:aws:logs:ap-southeast-1:111111111111:log-group:demo_vpn_loggroup:*"
+  log_output_format = "text"
+}]
+tunnel2_log_options = [{
+  log_enabled       = true
+  log_group_arn     = "arn:aws:logs:ap-southeast-1:111111111111:log-group:demo_vpn_loggroup:*"
+  log_output_format = "json"
+}]
+vpn_connection_tunnel1_phase1_dh_group_numbers      = [2]
+vpn_connection_tunnel1_phase1_integrity_algorithms  = ["SHA2-256"]
+vpn_connection_tunnel1_phase1_encryption_algorithms = ["AES128"]
+vpn_connection_tunnel1_phase2_dh_group_numbers      = ["2"]
+vpn_connection_tunnel2_phase1_dh_group_numbers      = [2]
+vpn_connection_tunnel2_phase1_integrity_algorithms  = ["SHA2-256"]
+vpn_connection_tunnel2_phase1_encryption_algorithms = ["AES128"]
+vpn_connection_tunnel1_phase1_lifetime_seconds      = 1000
+vpn_connection_tunnel2_phase1_lifetime_seconds      = 1000
+vpn_connection_tunnel2_phase2_dh_group_numbers      = ["2"]
+vpn_connection_tunnel1_phase2_encryption_algorithms = ["AES128"]
+vpn_connection_tunnel2_phase2_encryption_algorithms = ["AES128"]
+vpn_connection_tunnel1_phase2_integrity_algorithms  = ["SHA2-256"]
+vpn_connection_tunnel2_phase2_integrity_algorithms  = ["SHA2-256"]
+vpn_connection_tunnel1_phase2_lifetime_seconds      = 1000
+vpn_connection_tunnel2_phase2_lifetime_seconds      = 1000
+vpn_connection_tunnel1_rekey_fuzz_percentage        = 100
+vpn_connection_tunnel2_rekey_fuzz_percentage        = 100
+vpn_connection_tunnel1_rekey_margin_time_seconds    = 60
+vpn_connection_tunnel2_rekey_margin_time_seconds    = 60
+vpn_connection_tunnel1_replay_window_size           = 64
+vpn_connection_tunnel2_replay_window_size           = 64
+vpn_connection_tunnel1_startup_action               = "add"
+vpn_connection_tunnel2_startup_action               = "add"
 
-vpn_connection_tunnel_inside_ip_version = var.vpn_connection_tunnel_inside_ip_version
-vpn_connection_tunnel1_inside_cidr = var.vpn_connection_tunnel1_inside_cidr
-vpn_connection_tunnel2_inside_cidr = var.vpn_connection_tunnel2_inside_cidr
-vpn_connection_tunnel1_inside_ipv6_cidr = var.vpn_connection_tunnel1_inside_ipv6_cidr
-vpn_connection_tunnel2_inside_ipv6_cidr = var.vpn_connection_tunnel2_inside_ipv6_cidr
-vpn_connection_tunnel1_preshared_key = var.vpn_connection_tunnel1_preshared_key
-vpn_connection_tunnel2_preshared_key = var.vpn_connection_tunnel2_preshared_key
-vpn_connection_tunnel1_dpd_timeout_action  = var.vpn_connection_tunnel1_dpd_timeout_action 
-vpn_connection_tunnel2_dpd_timeout_action = var.vpn_connection_tunnel2_dpd_timeout_action
-vpn_connection_tunnel1_dpd_timeout_seconds  = var.vpn_connection_tunnel1_dpd_timeout_seconds 
-vpn_connection_tunnel2_dpd_timeout_seconds = var.vpn_connection_tunnel2_dpd_timeout_seconds
-vpn_connection_tunnel1_ike_versions = var.vpn_connection_tunnel1_ike_versions
-vpn_connection_tunnel2_ike_versions  = var.vpn_connection_tunnel2_ike_versions 
-tunnel1_log_options = var.tunnel1_log_options
-tunnel2_log_options = var.tunnel2_log_options
-vpn_connection_tunnel1_phase1_dh_group_numbers = var.vpn_connection_tunnel1_phase1_dh_group_numbers
-vpn_connection_tunnel2_phase1_dh_group_numbers = var.vpn_connection_tunnel2_phase1_dh_group_numbers
-vpn_connection_tunnel1_phase1_encryption_algorithms = var.vpn_connection_tunnel1_phase1_encryption_algorithms
-vpn_connection_tunnel2_phase1_encryption_algorithms = var.vpn_connection_tunnel2_phase1_encryption_algorithms
-vpn_connection_tunnel1_phase1_integrity_algorithms = var.vpn_connection_tunnel1_phase1_integrity_algorithms
-vpn_connection_tunnel2_phase1_integrity_algorithms = var.vpn_connection_tunnel2_phase1_integrity_algorithms
-vpn_connection_tunnel1_phase1_lifetime_seconds = var.vpn_connection_tunnel1_phase1_lifetime_seconds
-vpn_connection_tunnel2_phase1_lifetime_seconds = var.vpn_connection_tunnel2_phase1_lifetime_seconds
-vpn_connection_tunnel2_phase2_dh_group_numbers  = var.vpn_connection_tunnel2_phase2_dh_group_numbers 
-vpn_connection_tunnel1_phase2_dh_group_numbers = var.vpn_connection_tunnel1_phase2_dh_group_numbers
-vpn_connection_tunnel1_phase2_encryption_algorithms = var.vpn_connection_tunnel1_phase2_encryption_algorithms
-vpn_connection_tunnel2_phase2_encryption_algorithms  = var.vpn_connection_tunnel2_phase2_encryption_algorithms 
-vpn_connection_tunnel1_phase2_integrity_algorithms = var.vpn_connection_tunnel1_phase2_integrity_algorithms
-vpn_connection_tunnel2_phase2_integrity_algorithms = var.vpn_connection_tunnel2_phase2_integrity_algorithms
-vpn_connection_tunnel1_phase2_lifetime_seconds  = var.vpn_connection_tunnel1_phase2_lifetime_seconds 
-vpn_connection_tunnel2_phase2_lifetime_seconds = var.vpn_connection_tunnel2_phase2_lifetime_seconds
-vpn_connection_tunnel1_rekey_fuzz_percentage  = var.vpn_connection_tunnel1_rekey_fuzz_percentage 
-vpn_connection_tunnel2_rekey_fuzz_percentage  = var.vpn_connection_tunnel2_rekey_fuzz_percentage 
-vpn_connection_tunnel1_rekey_margin_time_seconds  = var.vpn_connection_tunnel1_rekey_margin_time_seconds 
-vpn_connection_tunnel2_rekey_margin_time_seconds = var.vpn_connection_tunnel2_rekey_margin_time_seconds
-vpn_connection_tunnel1_replay_window_size  = var.vpn_connection_tunnel1_replay_window_size 
-vpn_connection_tunnel2_replay_window_size = var.vpn_connection_tunnel2_replay_window_size
-vpn_connection_tunnel1_startup_action = var.vpn_connection_tunnel1_startup_action
-vpn_connection_tunnel2_startup_action = var.vpn_connection_tunnel2_startup_action
-vpn_connection_route_destination_cidr_block = var.vpn_connection_route_destination_cidr_block
+# vpn_connection_static_route
+vpn_connection_route_destination_cidr_block = ["192.168.10.0/24", "192.168.20.0/24", "192.168.30.0/24"]
 
 }
 

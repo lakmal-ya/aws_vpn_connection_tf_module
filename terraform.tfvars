@@ -1,7 +1,7 @@
 customer_gateway_bgp_asn    = 65000
 customer_gateway_ip_address = "172.83.124.10"
 customer_gateway_type       = "ipsec.1" #(Required) The only type AWS supports at this time is ipsec.1
-# customer_gateway_certificate_arn = "arn:aws:acm:ap-southeast-1:128787105886:certificate/365ac088-d023-4690-aa8e-6e4831a73332"
+# customer_gateway_certificate_arn = "arn:aws:acm:ap-southeast-1:111111111111:certificate/365ac088-d023-4690-aa8e-6e4831a73332"
 customer_gateway_device_name = "demo_customer_gateway"
 tags = {
   "Name" = "demo_customer_gateway"
@@ -34,12 +34,12 @@ vpn_connection_tunnel1_ike_versions       = ["ikev1"]
 vpn_connection_tunnel2_ike_versions       = ["ikev2"]
 tunnel1_log_options = [{
   log_enabled       = true
-  log_group_arn     = "arn:aws:logs:ap-southeast-1:128787105886:log-group:demo_vpn_loggroup:*"
+  log_group_arn     = "arn:aws:logs:ap-southeast-1:111111111111:log-group:demo_vpn_loggroup:*"
   log_output_format = "text"
 }]
 tunnel2_log_options = [{
   log_enabled       = true
-  log_group_arn     = "arn:aws:logs:ap-southeast-1:128787105886:log-group:demo_vpn_loggroup:*"
+  log_group_arn     = "arn:aws:logs:ap-southeast-1:111111111111:log-group:demo_vpn_loggroup:*"
   log_output_format = "json"
 }]
 vpn_connection_tunnel1_phase1_dh_group_numbers      = [2]
